@@ -92,11 +92,10 @@ sub pre_config_actions
 
     return 1 if !$self->{PRE_HOOK};
 
-    my @cmd = split(/\s+/, $self->{PRE_HOOK});
     my %opts = (log => $self);
     $opts{timeout} = $self->{PRE_HOOK_TIMEOUT} if $self->{PRE_HOOK_TIMEOUT};
 
-    my $proc = CAF::Process->new(\@cmd, %opts);
+    my $proc = CAF::Process->new([$self->{PRE_HOOK}], %opts);
     $proc->execute();
 
     if ($?) {
@@ -117,12 +116,11 @@ sub post_config_actions
 
     return 1 if !$self->{POST_HOOK};
 
-    my @cmd = split(/\s+/, $self->{POST_HOOK});
     my %opts = (log => $self,
                 stdin => encode_json($report));
     $opts{timeout} = $self->{POST_HOOK_TIMEOUT} if $self->{POST_HOOK_TIMEOUT};
 
-    my $proc = CAF::Process->new(\@cmd, %opts);
+    my $proc = CAF::Process->new([$self->{POST_HOOK}], %opts);
     $proc->execute();
 
     if ($?) {
